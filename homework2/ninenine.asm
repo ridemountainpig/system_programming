@@ -1,0 +1,108 @@
+	J	FIRSTR
+	
+.print number function
+PRINTNUM	
+	TD	OUTDEV
+	JEQ	PRINT
+	ADD	#48
+	WD	OUTDEV
+	RSUB
+
+.print function
+PRINT	
+	TD	OUTDEV
+	JEQ	PRINT
+	WD	OUTDEV
+	RSUB
+
+.print first row number
+FIRSTR	LDA	#1
+	STA	NUMI
+	LDA	#32
+	JSUB	PRINT	
+	JSUB	PRINT		
+	
+LOOPT	LDA	#32
+	JSUB	PRINT	
+	JSUB	PRINT	
+	JSUB	PRINT
+	LDA	NUMI
+	JSUB	PRINTNUM
+	SUB	#48
+	ADD	#1
+	STA	NUMI
+	COMP	#10
+	JLT	LOOPT
+	
+.i, j init
+TABLE	LDA	#1
+	STA	NUMI
+	STA	NUMJ
+.double loop
+.I loop
+LOOPI	LDA	#10	
+	WD	OUTDEV
+
+.print first column number
+	LDA	NUMI
+	JSUB	PRINTNUM
+	LDA	#32
+	JSUB	PRINT
+	JSUB	PRINT
+	JSUB	PRINT
+
+JINIT	LDA	#1
+	STA	NUMJ
+
+.J loop
+LOOPJ	LDA	NUMI
+	MUL	NUMJ
+	STA	NUMK
+
+.tens digit
+	DIV	#10
+	STA	NUM
+	COMP	#0
+	JGT	NOTZERO
+	JEQ	ZERO	
+
+.if tens digit is zero print space
+ZERO	LDA	#32
+	JSUB	PRINT
+	J	UNITS
+
+.if tens digit is not zero print number
+NOTZERO	JSUB	PRINTNUM
+	J	UNITS
+
+.units digit 
+UNITS	LDA	NUM
+	MUL	#10
+	STA	NUM
+	LDA	NUMK
+	SUB	NUM
+	JSUB	PRINTNUM
+	LDA	#32
+	JSUB	PRINT
+	JSUB	PRINT
+
+	.j add one
+	LDA	NUMJ
+	ADD	#1
+	STA	NUMJ
+	COMP	#10
+	JLT	LOOPJ
+
+	LDA	NUMI
+	ADD	#1
+	STA	NUMI
+
+	COMP	#10
+	JLT	LOOPI
+
+OUTDEV 	BYTE	X'F2'
+
+NUMI	WORD	0
+NUMJ	WORD	0
+NUMK	WORD	0
+NUM	WORD	0
