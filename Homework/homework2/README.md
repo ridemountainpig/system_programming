@@ -2,7 +2,7 @@
 
 ## Homework
 
-### [Homework 2. SIC/XE 組合語言 – 9x9 乘法表](https://github.com/ridemountainpig/system_programming/new/main/homework2)
+### [Homework 2. SIC/XE 組合語言 – 9x9 乘法表](https://github.com/ridemountainpig/system_programming/tree/main/Homework/homework2)
 請用 SIC/XE 的指令集寫一組合語言程式，在 Device ‘F2’ 中印出如下的 9x9 乘法表，請滿足以下要求：
 1. 寫出印一個數字（Register A 的值）的副程式 50 分
 2. 以雙迴圈的方式來列印，滿分最高 90 分
