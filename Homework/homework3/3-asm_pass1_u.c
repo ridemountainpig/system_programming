@@ -7,6 +7,7 @@
 /*  2019.12.13                                                         */
 /*  2021.03.26 Process error: format 1 & 2 instruction use + 		   */
 /***********************************************************************/
+#include <stdlib.h>
 #include <string.h>
 
 #include "2-optable.c"
@@ -207,6 +208,8 @@ int main(int argc, char *argv[]) {
   char buf[LEN_SYMBOL];
   LINE line;
 
+  int local_counter = 0;
+
   if (argc < 2) {
     printf("Usage: %s fname.asm\n", argv[0]);
   } else {
@@ -219,12 +222,132 @@ int main(int argc, char *argv[]) {
           printf("%03d : Error\n", line_count);
         else if (c == LINE_COMMENT)
           printf("%03d : Comment line\n", line_count);
-        else
-          printf("%03d : %12s %12s %12s,%12s (FMT=%X, ADDR=%X)\n", line_count,
-                 line.symbol, line.op, line.operand1, line.operand2, line.fmt,
-                 line.addressing);
+        else {
+          switch (line.fmt) {
+            case 0:
+              if (strcmp(line.operand2, "") == 0) {
+                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, "");
+              } else {
+                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, line.operand2);
+              }
+
+              if (strcmp(line.op, "RESW") == 0) {
+                local_counter += 3;
+              } else if (strcmp(line.op, "RESB") == 0) {
+                local_counter += atoi(line.operand1);
+              } else if (strcmp(line.op, "BYTE") == 0) {
+                int length = strlen(line.operand1);
+                if (line.operand1[0] == 'C') {
+                  local_counter += length - 3;
+                } else {
+                  if (length % 2 == 1) {
+                    local_counter += (length - 3) / 2 + 1;
+                  } else {
+                    local_counter += (length - 3) / 2;
+                  }
+                }
+              } else {
+                local_counter += 0;
+              }
+
+              break;
+            case 1:
+              if (strcmp(line.operand2, "") == 0) {
+                printf("%06x : %12s %12s %12s %12s\n", local_counter,
+                       line.symbol, line.op, line.operand1, "");
+              } else {
+                printf("%06x : %12s %12s %12s,%12s\n", local_counter,
+                       line.symbol, line.op, line.operand1, line.operand2);
+              }
+              local_counter += 1;
+              break;
+            case 2:
+              if (strcmp(line.operand2, "") == 0) {
+                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, "");
+              } else {
+                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, line.operand2);
+              }
+              local_counter += 2;
+              break;
+            case 3:
+              if (strcmp(line.operand2, "") == 0) {
+                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, "");
+              } else {
+                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, line.operand2);
+              }
+              local_counter += 3;
+              break;
+            case 4:
+              if (strcmp(line.operand2, "") == 0) {
+                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, "");
+              } else {
+                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
+                       line.op, line.operand1, line.operand2);
+              }
+
+              local_counter += 4;
+              break;
+          }
+        }
+        //   printf("%03d : %12s %12s %12s,%12s (FMT=%X, ADDR=%X)\n",
+        //   line_count,
+        //          line.symbol, line.op, line.operand1, line.operand2,
+        //          line.fmt, line.addressing);
       }
+
       ASM_close();
+      ASM_open(argv[1]);
+
+      printf("\n\nProgram length = %x\n", local_counter);
+
+      local_counter = 0;
+      for (line_count = 1; (c = process_line(&line)) != LINE_EOF;
+           line_count++) {
+        if (strlen(line.symbol) != 0) {
+          printf("%14s :  %06x\n", line.symbol, local_counter);
+        }
+        switch (line.fmt) {
+          case 0:
+            if (strcmp(line.op, "RESW") == 0) {
+              local_counter += 3;
+            } else if (strcmp(line.op, "RESB") == 0) {
+              local_counter += atoi(line.operand1);
+            } else if (strcmp(line.op, "BYTE") == 0) {
+              int length = strlen(line.operand1);
+              if (line.operand1[0] == 'C') {
+                local_counter += length - 3;
+              } else {
+                if (length % 2 == 1) {
+                  local_counter += (length - 3) / 2 + 1;
+                } else {
+                  local_counter += (length - 3) / 2;
+                }
+              }
+            } else {
+              local_counter += 0;
+            }
+            break;
+          case 1:
+            local_counter += 1;
+            break;
+          case 2:
+            local_counter += 2;
+            break;
+          case 3:
+            local_counter += 3;
+            break;
+          case 4:
+            local_counter += 4;
+            break;
+        }
+      }
     }
   }
 }

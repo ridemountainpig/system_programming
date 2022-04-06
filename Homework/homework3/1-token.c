@@ -14,7 +14,7 @@
 /* Public variables and functions */
 FILE *ASM_open(char *fname); /* Open a SIC/XE asm file */
                              /* return NULL if failed */
-void ASM_close(void);        /* Cloase the asm file */
+void ASM_close(void);        /* Close the asm file */
 int ASM_token(char *buf);    /* Get a token from the file */
                              /* The token is stored at buf. */
 /* Return the length of the token. Return EOF if end of file reached. */
@@ -106,18 +106,18 @@ int ASM_token(char *buf)
   return (len);
 }
 
-int main(int argc, char *argv[]) {
-  int i, c;
-  char buf[LEN_SYMBOL];
+// int main(int argc, char *argv[]) {
+//   int i, c;
+//   char buf[LEN_SYMBOL];
 
-  if (argc < 2) {
-    printf("Usage: %s fname.asm\n", argv[0]);
-  } else {
-    if (ASM_open(argv[1]) == NULL)
-      printf("File not found!!\n");
-    else {
-      while ((c = ASM_token(buf)) != EOF) printf("%s ", buf);
-      ASM_close();
-    }
-  }
-}
+//   if (argc < 2) {
+//     printf("Usage: %s fname.asm\n", argv[0]);
+//   } else {
+//     if (ASM_open(argv[1]) == NULL)
+//       printf("File not found!!\n");
+//     else {
+//       while ((c = ASM_token(buf)) != EOF) printf("%s ", buf);
+//       ASM_close();
+//     }
+//   }
+// }

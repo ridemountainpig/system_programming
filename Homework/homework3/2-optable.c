@@ -10,8 +10,8 @@
 #define FMT0 0x00 /* SIC Assembler Directive */
 #define FMT1 0x01 /* Format 1 */
 #define FMT2 0x02 /* Format 2 */
-#define FMT3 0x04 /* Format 3 */
-#define FMT4 0x08 /* Format 4 */
+#define FMT3 0x03 /* Format 3 */
+#define FMT4 0x04 /* Format 4 */
 #define OP_BYTE 0x101
 #define OP_WORD 0x102
 #define OP_RESB 0x103
