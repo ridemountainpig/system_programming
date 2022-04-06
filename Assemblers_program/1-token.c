@@ -127,27 +127,27 @@ int ASM_token(char *buf)
 }
 
 
-int main(int argc, char *argv[])
-{
-	int			i, c;
-	char			buf[LEN_SYMBOL];
+// int main(int argc, char *argv[])
+// {
+// 	int			i, c;
+// 	char			buf[LEN_SYMBOL];
 
-	if(argc < 2)
-	{
-		printf("Usage: %s fname.asm\n", argv[0]);
-	}
-	else
-	{
-		if(ASM_open(argv[1]) == NULL)
-			printf("File not found!!\n");
-		else
-		{
-			while((c = ASM_token(buf)) != EOF)
-				printf("%s ", buf);
-			ASM_close();
-		}
-	}
-}
+// 	if(argc < 2)
+// 	{
+// 		printf("Usage: %s fname.asm\n", argv[0]);
+// 	}
+// 	else
+// 	{
+// 		if(ASM_open(argv[1]) == NULL)
+// 			printf("File not found!!\n");
+// 		else
+// 		{
+// 			while((c = ASM_token(buf)) != EOF)
+// 				printf("%s ", buf);
+// 			ASM_close();
+// 		}
+// 	}
+// }
 
 
 
