@@ -223,16 +223,53 @@ int main(int argc, char *argv[]) {
         else if (c == LINE_COMMENT)
           printf("%03d : Comment line\n", line_count);
         else {
+          if (strcmp(line.operand2, "") == 0) {
+            char op_str[100] = "\0";
+            char operand_str[100] = "\0";
+            if (line.fmt == 4) {
+              strcat(op_str, "+");
+              strcat(op_str, line.op);
+            } else {
+              strcat(op_str, line.op);
+            }
+
+            if (line.addressing == ADDR_IMMEDIATE) {
+              strcat(operand_str, "#");
+              strcat(operand_str, line.operand1);
+            } else if (line.addressing == ADDR_INDIRECT) {
+              strcat(operand_str, "@");
+              strcat(operand_str, line.operand1);
+            } else {
+              strcat(operand_str, line.operand1);
+            }
+
+            printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
+                   op_str, operand_str, "");
+          } else {
+            char op_str[100] = "\0";
+            char operand_str[100] = "\0";
+            if (line.fmt == 4) {
+              strcat(op_str, "+");
+              strcat(op_str, line.op);
+            } else {
+              strcat(op_str, line.op);
+            }
+
+            if (line.addressing == ADDR_IMMEDIATE) {
+              strcat(operand_str, "#");
+              strcat(operand_str, line.operand1);
+            } else if (line.addressing == ADDR_INDIRECT) {
+              strcat(operand_str, "@");
+              strcat(operand_str, line.operand1);
+            } else {
+              strcat(operand_str, line.operand1);
+            }
+
+            printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
+                   op_str, operand_str, line.operand2);
+          }
           switch (line.fmt) {
             case 0:
-              if (strcmp(line.operand2, "") == 0) {
-                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, "");
-              } else {
-                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, line.operand2);
-              }
-
               if (strcmp(line.op, "RESW") == 0) {
                 local_counter += 3;
               } else if (strcmp(line.op, "RESB") == 0) {
@@ -254,44 +291,15 @@ int main(int argc, char *argv[]) {
 
               break;
             case 1:
-              if (strcmp(line.operand2, "") == 0) {
-                printf("%06x : %12s %12s %12s %12s\n", local_counter,
-                       line.symbol, line.op, line.operand1, "");
-              } else {
-                printf("%06x : %12s %12s %12s,%12s\n", local_counter,
-                       line.symbol, line.op, line.operand1, line.operand2);
-              }
               local_counter += 1;
               break;
             case 2:
-              if (strcmp(line.operand2, "") == 0) {
-                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, "");
-              } else {
-                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, line.operand2);
-              }
               local_counter += 2;
               break;
             case 3:
-              if (strcmp(line.operand2, "") == 0) {
-                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, "");
-              } else {
-                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, line.operand2);
-              }
               local_counter += 3;
               break;
             case 4:
-              if (strcmp(line.operand2, "") == 0) {
-                printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, "");
-              } else {
-                printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
-                       line.op, line.operand1, line.operand2);
-              }
-
               local_counter += 4;
               break;
           }
