@@ -1,7 +1,6 @@
 # homework3 example
 <br>
 ## original
-<br>
 ```
 001 :         COPY        START            0,             (FMT=0, ADDR=1)
 002 :        FIRST          STL       RETARD,             (FMT=4, ADDR=1)
@@ -26,7 +25,6 @@
 ```
 
 ## after pass1
-<br>
 ```
 000000         COPY        START            0             
 000000        FIRST          STL       RETARD             
