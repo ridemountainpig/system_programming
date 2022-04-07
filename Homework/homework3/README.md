@@ -1,5 +1,5 @@
 # homework3 example
-<br>
+
 ## original
 ```
 001 :         COPY        START            0,             (FMT=0, ADDR=1)
