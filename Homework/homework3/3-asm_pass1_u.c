@@ -208,7 +208,9 @@ int main(int argc, char *argv[]) {
   char buf[LEN_SYMBOL];
   LINE line;
 
-  int local_counter = 0;
+  // local counter
+  int start_local_counter;
+  int final_local_counter;
 
   if (argc < 2) {
     printf("Usage: %s fname.asm\n", argv[0]);
@@ -218,89 +220,76 @@ int main(int argc, char *argv[]) {
     else {
       for (line_count = 1; (c = process_line(&line)) != LINE_EOF;
            line_count++) {
+        if (line_count == 1) {
+          start_local_counter = atoi(line.operand1);
+          final_local_counter = atoi(line.operand1);
+        }
         if (c == LINE_ERROR)
           printf("%03d : Error\n", line_count);
         else if (c == LINE_COMMENT)
           printf("%03d : Comment line\n", line_count);
         else {
-          if (strcmp(line.operand2, "") == 0) {
-            char op_str[100] = "\0";
-            char operand_str[100] = "\0";
-            if (line.fmt == 4) {
-              strcat(op_str, "+");
-              strcat(op_str, line.op);
-            } else {
-              strcat(op_str, line.op);
-            }
-
-            if (line.addressing == ADDR_IMMEDIATE) {
-              strcat(operand_str, "#");
-              strcat(operand_str, line.operand1);
-            } else if (line.addressing == ADDR_INDIRECT) {
-              strcat(operand_str, "@");
-              strcat(operand_str, line.operand1);
-            } else {
-              strcat(operand_str, line.operand1);
-            }
-
-            printf("%06x %12s %12s %12s %12s\n", local_counter, line.symbol,
-                   op_str, operand_str, "");
+          char op_str[100] = "\0";
+          char operand_str[100] = "\0";
+          if (line.fmt == 4) {
+            strcat(op_str, "+");
+            strcat(op_str, line.op);
           } else {
-            char op_str[100] = "\0";
-            char operand_str[100] = "\0";
-            if (line.fmt == 4) {
-              strcat(op_str, "+");
-              strcat(op_str, line.op);
-            } else {
-              strcat(op_str, line.op);
-            }
-
-            if (line.addressing == ADDR_IMMEDIATE) {
-              strcat(operand_str, "#");
-              strcat(operand_str, line.operand1);
-            } else if (line.addressing == ADDR_INDIRECT) {
-              strcat(operand_str, "@");
-              strcat(operand_str, line.operand1);
-            } else {
-              strcat(operand_str, line.operand1);
-            }
-
-            printf("%06x %12s %12s %12s,%12s\n", local_counter, line.symbol,
-                   op_str, operand_str, line.operand2);
+            strcat(op_str, line.op);
           }
+
+          if (line.addressing == ADDR_IMMEDIATE) {
+            strcat(operand_str, "#");
+            strcat(operand_str, line.operand1);
+          } else if (line.addressing == ADDR_INDIRECT) {
+            strcat(operand_str, "@");
+            strcat(operand_str, line.operand1);
+          } else {
+            strcat(operand_str, line.operand1);
+          }
+
+          printf("%06x %12s %12s", final_local_counter, line.symbol, op_str);
+          if (line.addressing == (ADDR_INDEX | ADDR_SIMPLE)) {
+            printf("%12s,%12s\n", operand_str, "X");
+          } else if (line.fmt == FMT2) {
+            printf("%12s,%12s\n", operand_str, line.operand2);
+          } else {
+            printf("%12s\n", operand_str);
+          }
+
           switch (line.fmt) {
             case 0:
               if (strcmp(line.op, "RESW") == 0) {
-                local_counter += 3;
+                final_local_counter += 3;
               } else if (strcmp(line.op, "RESB") == 0) {
-                local_counter += atoi(line.operand1);
+                final_local_counter += atoi(line.operand1);
               } else if (strcmp(line.op, "BYTE") == 0) {
                 int length = strlen(line.operand1);
                 if (line.operand1[0] == 'C') {
-                  local_counter += length - 3;
+                  final_local_counter += length - 3;
                 } else {
                   if (length % 2 == 1) {
-                    local_counter += (length - 3) / 2 + 1;
+                    final_local_counter += (length - 3) / 2 + 1;
                   } else {
-                    local_counter += (length - 3) / 2;
+                    final_local_counter += (length - 3) / 2;
                   }
                 }
               } else {
-                local_counter += 0;
+                final_local_counter += 0;
               }
 
               break;
             case 1:
-              local_counter += 1;
+              final_local_counter += 1;
               break;
             case 2:
-              local_counter += 2;
+              final_local_counter += 2;
               break;
             case 3:
-              local_counter += 3;
+              final_local_counter += 3;
               break;
             case 4:
-              local_counter += 4;
+              final_local_counter += 4;
               break;
           }
         }
@@ -313,46 +302,49 @@ int main(int argc, char *argv[]) {
       ASM_close();
       ASM_open(argv[1]);
 
-      printf("\n\nProgram length = %x\n", local_counter);
+      printf("\n\nProgram length = %x\n",
+             final_local_counter - start_local_counter);
 
-      local_counter = 0;
       for (line_count = 1; (c = process_line(&line)) != LINE_EOF;
            line_count++) {
+        if (line_count == 1) {
+          start_local_counter = atoi(line.operand1);
+        }
         if (strlen(line.symbol) != 0) {
-          printf("%14s :  %06x\n", line.symbol, local_counter);
+          printf("%14s :  %06x\n", line.symbol, start_local_counter);
         }
         switch (line.fmt) {
           case 0:
             if (strcmp(line.op, "RESW") == 0) {
-              local_counter += 3;
+              start_local_counter += 3;
             } else if (strcmp(line.op, "RESB") == 0) {
-              local_counter += atoi(line.operand1);
+              start_local_counter += atoi(line.operand1);
             } else if (strcmp(line.op, "BYTE") == 0) {
               int length = strlen(line.operand1);
               if (line.operand1[0] == 'C') {
-                local_counter += length - 3;
+                start_local_counter += length - 3;
               } else {
                 if (length % 2 == 1) {
-                  local_counter += (length - 3) / 2 + 1;
+                  start_local_counter += (length - 3) / 2 + 1;
                 } else {
-                  local_counter += (length - 3) / 2;
+                  start_local_counter += (length - 3) / 2;
                 }
               }
             } else {
-              local_counter += 0;
+              start_local_counter += 0;
             }
             break;
           case 1:
-            local_counter += 1;
+            start_local_counter += 1;
             break;
           case 2:
-            local_counter += 2;
+            start_local_counter += 2;
             break;
           case 3:
-            local_counter += 3;
+            start_local_counter += 3;
             break;
           case 4:
-            local_counter += 4;
+            start_local_counter += 4;
             break;
         }
       }
