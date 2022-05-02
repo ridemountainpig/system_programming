@@ -208,9 +208,17 @@ int main(int argc, char *argv[]) {
   char buf[LEN_SYMBOL];
   LINE line;
 
+  struct {
+    char name[100];
+    int location;
+  } symbol_table[100];
+
   // local counter
   int start_local_counter;
   int final_local_counter;
+
+  // symbol table
+  int smybol_length = 0;
 
   if (argc < 2) {
     printf("Usage: %s fname.asm\n", argv[0]);
@@ -257,6 +265,14 @@ int main(int argc, char *argv[]) {
             printf("%12s\n", operand_str);
           }
 
+          if (strlen(line.symbol) != 0) {
+            memset(symbol_table[smybol_length].name, 0,
+                   strlen(symbol_table[smybol_length].name));
+            strcat(symbol_table[smybol_length].name, line.symbol);
+            symbol_table[smybol_length].location = final_local_counter;
+            smybol_length++;
+          }
+
           switch (line.fmt) {
             case 0:
               if (strcmp(line.op, "RESW") == 0) {
@@ -300,53 +316,13 @@ int main(int argc, char *argv[]) {
       }
 
       ASM_close();
-      ASM_open(argv[1]);
 
       printf("\n\nProgram length = %x\n",
              final_local_counter - start_local_counter);
 
-      for (line_count = 1; (c = process_line(&line)) != LINE_EOF;
-           line_count++) {
-        if (line_count == 1) {
-          start_local_counter = atoi(line.operand1);
-        }
-        if (strlen(line.symbol) != 0) {
-          printf("%14s :  %06x\n", line.symbol, start_local_counter);
-        }
-        switch (line.fmt) {
-          case 0:
-            if (strcmp(line.op, "RESW") == 0) {
-              start_local_counter += 3;
-            } else if (strcmp(line.op, "RESB") == 0) {
-              start_local_counter += atoi(line.operand1);
-            } else if (strcmp(line.op, "BYTE") == 0) {
-              int length = strlen(line.operand1);
-              if (line.operand1[0] == 'C') {
-                start_local_counter += length - 3;
-              } else {
-                if (length % 2 == 1) {
-                  start_local_counter += (length - 3) / 2 + 1;
-                } else {
-                  start_local_counter += (length - 3) / 2;
-                }
-              }
-            } else {
-              start_local_counter += 0;
-            }
-            break;
-          case 1:
-            start_local_counter += 1;
-            break;
-          case 2:
-            start_local_counter += 2;
-            break;
-          case 3:
-            start_local_counter += 3;
-            break;
-          case 4:
-            start_local_counter += 4;
-            break;
-        }
+      for (i = 0; i < smybol_length; i++) {
+        printf("%14s :  %06x\n", symbol_table[i].name,
+               symbol_table[i].location);
       }
     }
   }
