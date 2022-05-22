@@ -91,7 +91,6 @@ int main(int argc, char *argv[]) {
   char start[100];
   strcat(start, argv[1]);
   int lengthSum = stringToDec(start);
-  printf("%X\n", lengthSum);
 
   for (i = 2; i < argc; i++) {
     FILE *f = fopen(argv[i], "r");
