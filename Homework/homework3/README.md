@@ -1,4 +1,4 @@
-# homework3 example
+# Homework 3. Assembler – Pass 1
 
 請參考課堂中提供的程式 (1-token.c, 2-optable.c 及 3-asm_pass1_u.c) 及 Figure 2.4(a) 的演算法完成 SIC/XE Assembler 的 Pass 1。你的程式要完成：
 
