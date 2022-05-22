@@ -1,5 +1,21 @@
 # homework3 example
 
+請參考課堂中提供的程式 (1-token.c, 2-optable.c 及 3-asm_pass1_u.c) 及 Figure 2.4(a) 的演算法完成 SIC/XE Assembler 的 Pass 1。你的程式要完成：
+
+1.    如 Figure 2.2 秀出每一行組合語言程式的指令，並在前面印出 LOCCTR 的值(該行最後不需印出 Object Code ，印不印出註解均可)
+
+2.    印出 ASM Program 的長度
+
+3.    請在最後印出 SYMTAB 的 Symbol 及其對應值。
+
+Please complete the Pass 1 of a SIC/XE Assembler based on the algorithm in Figure 2.4(a) and sample programs (1-token.c, 2-optable.c and 3-asm_pass1_u.c). Your program has to complete the following items:
+
+1.    Print the LOCCTR and the assembler instruction as it was shown in Figure 2.2.
+
+2.    Print the length of the assembler program.
+
+3.    Print the value of each symbol in the SYMTAB.
+
 ## original
 ```
 001 :         COPY        START            0,             (FMT=0, ADDR=1)
